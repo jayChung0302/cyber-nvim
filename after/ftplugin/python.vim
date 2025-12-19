@@ -17,6 +17,19 @@ if !exists('g:plugs') && !exists('g:lazy_did_setup')
 endif
 
 if has('nvim')
+  " Provide a minimal project root finder so AutoTabsizePython doesn't explode.
+  if !exists('*DetermineProjectRoot')
+    function! DetermineProjectRoot(...) abort
+      if executable('git')
+        let l:root = systemlist('git rev-parse --show-toplevel')[0]
+        if v:shell_error == 0 && !empty(l:root)
+          return l:root
+        endif
+      endif
+      return getcwd()
+    endfunction
+  endif
+
   " TODO: Remove this config, should use .editorconfig
   function! AutoTabsizePython(...) abort
     let l:project_root = DetermineProjectRoot()

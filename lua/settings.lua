@@ -31,8 +31,14 @@ local function get_python_path()
   return "python"
 end
 
-vim.g.python3_host_prog = get_python_path()
+local function set_python_host()
+  vim.g.python3_host_prog = get_python_path()
+end
+
+set_python_host()
+vim.api.nvim_create_autocmd("DirChanged", {
+  callback = set_python_host,
+})
 
 -- DAP breakpoint sign (make it obvious)
 vim.fn.sign_define("DapBreakpoint", { text = "🟥", texthl = "", linehl = "", numhl = "" })
-
