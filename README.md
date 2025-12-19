@@ -77,16 +77,9 @@ Ligatures: ON
 Transparency: 5~10%
 
 ### 4️⃣ Neovim 설정 설치
-Clone
+Clone + Symlink
 ```bash
-git clone https://github.com/jayChung0302/cyber-nvim.git ~/.config/nvim
-rm -rf ~/.config/nvim
-ln -s ~/.dotfiles/nvim ~/.config/nvim
-nvim
-```
-
-Symlink
-```
+git clone https://github.com/jayChung0302/cyber-nvim.git ~/.dotfiles/nvim
 rm -rf ~/.config/nvim
 ln -s ~/.dotfiles/nvim ~/.config/nvim
 ```
@@ -182,7 +175,7 @@ config = function() 사용 금지 (Neovim 0.11)
 
 ## 📌 권장 사항
 
-lazy-lock.json 커밋 유지 (완전 재현)
+- `lazy-lock.json` 커밋 유지 (완전 재현)
 
 Tree-sitter는 auto_install = false
 

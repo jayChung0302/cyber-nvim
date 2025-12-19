@@ -38,19 +38,22 @@ map("n", "<leader>nf", "<cmd>NERDTreeFind<cr>")
 -- Run current Python file with uv (assumes project has uv + .venv)
 map("n", "<leader>rr", function()
   local file = vim.fn.expand("%:p")
-  vim.cmd("botright split term://uv run python " .. vim.fn.fnameescape(file))
+  local sh_cmd = "uv run python " .. vim.fn.shellescape(file)
+  vim.cmd(string.format("botright split term://bash -lc %s", vim.fn.shellescape(sh_cmd)))
 end)
 
 -- Run with stdin from input.txt (algorithm style)
 map("n", "<leader>ri", function()
   local file = vim.fn.expand("%:p")
-  vim.cmd("botright split term://bash -lc 'uv run python " .. file .. " < input.txt'")
+  local sh_cmd = "uv run python " .. vim.fn.shellescape(file) .. " < input.txt"
+  vim.cmd(string.format("botright split term://bash -lc %s", vim.fn.shellescape(sh_cmd)))
 end)
 
 -- Run multi cases with diff (cases/in/*.txt + cases/out/*.txt)
 map("n", "<leader>rc", function()
   local file = vim.fn.expand("%:p")
-  vim.cmd("botright split term://bash -lc './scripts/run_cases.sh " .. file .. "'")
+  local sh_cmd = "./scripts/run_cases.sh " .. vim.fn.shellescape(file)
+  vim.cmd(string.format("botright split term://bash -lc %s", vim.fn.shellescape(sh_cmd)))
 end)
 
 -- Insert algorithm template into empty file
@@ -140,4 +143,3 @@ map("n", "<leader>ds", function()
   local widgets = safe_require("dap.ui.widgets")
   if widgets then widgets.centered_float(widgets.scopes) end
 end)
-
