@@ -119,37 +119,15 @@ Neovim 안에서:
 필수 패키지
 `uv pip install black isort debugpy pyright fastapi uvicorn`
 
-### 8️⃣ 주요 Keymaps
-#### 🌳 탐색
-- 키	기능
-- <leader>n	NERDTree Toggle
-- <leader>ff	파일 검색
-- <leader>fg	Live grep
-#### 🧪 실행
-- 키	기능
-- <leader>rr	현재 Python 파일 실행 (uv)
-- <leader>ri	input.txt를 stdin으로 실행
-- <leader>rc	cases/in ↔ cases/out diff 실행
-#### 🧠 알고리즘
-- 키	기능
-- <leader>at	Python 알고리즘 템플릿 삽입
-#### 🐞 디버깅 (DAP)
-- 키	기능
-- <leader>db	Breakpoint
-- <leader>dB	조건 Breakpoint
-- <leader>dc	Continue
-- <leader>do	Step over
-- <leader>di	Step into
-- <leader>dO	Step out
-- <leader>dh	변수 Hover
-- <leader>ds	Scopes
-- <leader>du	DAP UI 토글
-#### 🎨 테마
-- 키	테마
-- <leader>tc	Cyberdream
-- <leader>tt	Tokyonight
-- <leader>to	Oxocarbon
-- <leader>tm	Catppuccin
+### 8️⃣ Keymap Cheat Sheet
+- **기본/창**: `<leader>w` 저장, `<leader>q` 종료, `<C-h/j/k/l>` 창 이동, `<A-h/j/k/l>` 리사이즈, `<leader>sv`/`<leader>sh` 분할.
+- **파일/탐색**: `<leader>n` NERDTree 토글, `<leader>nf` 현재 파일 찾기, `<leader>ff` 파일 검색, `<leader>fg` 라이브 grep, `<leader>fb` 버퍼, `<leader>fr` 최근 파일.
+- **진단/LSP**: `<leader>e` 다이얼로그, `[d`/`]d` 이전/다음, `K` 호버, `gd` 정의, `gr` 참조, `<leader>rn` 리네임, `<leader>ca` 코드 액션.
+- **완성/스니펫**: `Ctrl-Space`/`Ctrl-@` 완성 메뉴, 메뉴 열려 있을 때 `<CR>` 확정(닫힘문자 자동삽입), 메뉴 없으면 줄바꿈+자동 들여쓰기. nvim-autopairs가 (), "", {} 등을 자동으로 닫음.
+- **실행**: `<leader>rr` 현재 파이썬 파일 `uv run`, `<leader>ri` input.txt stdin 실행, `<leader>rc` cases diff 실행, `<leader>fa` FastAPI run (`uvicorn main:app --reload`).
+- **알고리즘 템플릿**: `<leader>at` 빈 파이썬 버퍼에 기본 템플릿 삽입.
+- **디버깅 (DAP)**: `<leader>db` BP, `<leader>dB` 조건 BP, `<leader>dc` 계속, `<leader>do/di/dO` step over/into/out, `<leader>dh` hover, `<leader>ds` scopes, `<leader>du` UI 토글, `<leader>dp` REPL, `<leader>dr` restart, `<leader>dq` 종료.
+- **테마**: `<leader>tc` Cyberdream, `<leader>tt` Tokyonight, `<leader>to` Oxocarbon, `<leader>tm` Catppuccin.
 
 ### 9️⃣ FastAPI 실행
 

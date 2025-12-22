@@ -152,5 +152,11 @@ require("lazy").setup({
   },
 })
 
--- Default theme
-vim.cmd.colorscheme("cyberdream")
+-- Default theme (with graceful fallback)
+local function set_colorscheme(name)
+  local ok, err = pcall(vim.cmd.colorscheme, name)
+  if not ok then
+    vim.notify("colorscheme `" .. name .. "` 적용 실패: " .. tostring(err), vim.log.levels.WARN)
+  end
+end
+set_colorscheme("cyberdream")
