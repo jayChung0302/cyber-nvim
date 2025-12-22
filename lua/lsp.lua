@@ -12,7 +12,9 @@ cmp.setup({
   snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
   mapping = cmp.mapping.preset.insert({
     ["<CR>"] = cmp.mapping.confirm({ select = true }),
+    -- <C-Space> is often intercepted on macOS/terminals; add <C-@> as alias.
     ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-@>"] = cmp.mapping.complete(),
   }),
   sources = {
     { name = "nvim_lsp" },
@@ -52,4 +54,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("n", "<leader>ca", vim.lsp.buf.code_action, opts)
   end,
 })
-
