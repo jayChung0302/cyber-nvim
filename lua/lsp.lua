@@ -28,28 +28,48 @@ cmp.setup({
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+local function get_python_path(root_dir)
+  local function join(p) return vim.fn.resolve(root_dir .. "/" .. p) end
+  local venv = join(".venv/bin/python")
+  if vim.fn.filereadable(venv) == 1 then
+    return venv
+  end
+  local py3 = vim.fn.exepath("python3")
+  if py3 ~= "" then return py3 end
+  return "python"
+end
+
 -- LSP server setup via mason-lspconfig + lspconfig
-mason_lspconfig.setup_handlers({
-  function(server_name)
-    local opts = {
-      capabilities = capabilities,
-    }
+local function setup_server(server_name)
+  local opts = {
+    capabilities = capabilities,
+  }
 
-    if server_name == "pyright" then
-      opts.settings = {
-        python = {
-          analysis = {
-            typeCheckingMode = "basic",
-            autoSearchPaths = true,
-            useLibraryCodeForTypes = true,
-          },
+  if server_name == "pyright" then
+    opts.settings = {
+      python = {
+        analysis = {
+          typeCheckingMode = "basic",
+          autoSearchPaths = true,
+          useLibraryCodeForTypes = true,
         },
-      }
+      },
+    }
+    opts.before_init = function(_, config)
+      config.settings.python.pythonPath = get_python_path(config.root_dir or vim.loop.cwd())
     end
+  end
 
-    lspconfig[server_name].setup(opts)
-  end,
-})
+  lspconfig[server_name].setup(opts)
+end
+
+if mason_lspconfig.setup_handlers then
+  mason_lspconfig.setup_handlers({ setup_server })
+else
+  for _, server in ipairs(mason_lspconfig.get_installed_servers()) do
+    setup_server(server)
+  end
+end
 
 -- LSP keymaps on attach
 vim.api.nvim_create_autocmd("LspAttach", {
