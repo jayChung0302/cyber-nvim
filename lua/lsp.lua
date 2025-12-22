@@ -1,6 +1,10 @@
 -- mason: LSP server installer/manager
-require("mason").setup()
-require("mason-lspconfig").setup({
+local mason = require("mason")
+local mason_lspconfig = require("mason-lspconfig")
+local lspconfig = require("lspconfig")
+
+mason.setup()
+mason_lspconfig.setup({
   ensure_installed = { "pyright" },
 })
 
@@ -24,23 +28,28 @@ cmp.setup({
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- Neovim 0.11+ LSP config API
--- Register server configs
-vim.lsp.config("pyright", {
-  capabilities = capabilities,
-  settings = {
-    python = {
-      analysis = {
-        typeCheckingMode = "basic",
-        autoSearchPaths = true,
-        useLibraryCodeForTypes = true,
-      },
-    },
-  },
-})
+-- LSP server setup via mason-lspconfig + lspconfig
+mason_lspconfig.setup_handlers({
+  function(server_name)
+    local opts = {
+      capabilities = capabilities,
+    }
 
--- Enable server
-vim.lsp.enable("pyright")
+    if server_name == "pyright" then
+      opts.settings = {
+        python = {
+          analysis = {
+            typeCheckingMode = "basic",
+            autoSearchPaths = true,
+            useLibraryCodeForTypes = true,
+          },
+        },
+      }
+    end
+
+    lspconfig[server_name].setup(opts)
+  end,
+})
 
 -- LSP keymaps on attach
 vim.api.nvim_create_autocmd("LspAttach", {

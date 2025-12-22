@@ -75,6 +75,7 @@ require("lazy").setup({
   { "preservim/nerdtree" },
 
   -- LSP / Mason
+  { "neovim/nvim-lspconfig" },
   { "williamboman/mason.nvim", config = true },
   { "williamboman/mason-lspconfig.nvim" },
 
@@ -142,4 +143,3 @@ require("lazy").setup({
 
 -- Default theme
 vim.cmd.colorscheme("cyberdream")
-
