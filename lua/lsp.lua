@@ -1,7 +1,6 @@
 -- mason: LSP server installer/manager
 local mason = require("mason")
 local mason_lspconfig = require("mason-lspconfig")
-local lspconfig = require("lspconfig")
 
 mason.setup()
 mason_lspconfig.setup({
@@ -28,7 +27,26 @@ cmp.setup({
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+local root_markers = {
+  "pyproject.toml",
+  "setup.py",
+  "setup.cfg",
+  "Pipfile",
+  "requirements.txt",
+  ".git",
+}
+
+local function guess_root_dir(fname)
+  fname = fname or vim.api.nvim_buf_get_name(0)
+  local root = vim.fs.dirname(vim.fs.find(root_markers, { path = fname, upward = true })[1] or "")
+  if root == "" then
+    return vim.loop.cwd()
+  end
+  return root
+end
+
 local function get_python_path(root_dir)
+  root_dir = root_dir or vim.loop.cwd()
   local function join(p) return vim.fn.resolve(root_dir .. "/" .. p) end
   local venv = join(".venv/bin/python")
   if vim.fn.filereadable(venv) == 1 then
@@ -39,37 +57,37 @@ local function get_python_path(root_dir)
   return "python"
 end
 
--- LSP server setup via mason-lspconfig + lspconfig
-local function setup_server(server_name)
-  local opts = {
-    capabilities = capabilities,
-  }
+local function pyright_cmd()
+  local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
+  if vim.fn.executable(mason_bin) == 1 then
+    return { mason_bin, "--stdio" }
+  end
+  return { "pyright-langserver", "--stdio" }
+end
 
-  if server_name == "pyright" then
-    opts.settings = {
-      python = {
-        analysis = {
-          typeCheckingMode = "basic",
-          autoSearchPaths = true,
-          useLibraryCodeForTypes = true,
-        },
+-- Neovim 0.11+ LSP config API
+vim.lsp.config("pyright", {
+  cmd = pyright_cmd(),
+  root_dir = guess_root_dir,
+  capabilities = capabilities,
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "basic",
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
       },
-    }
-    opts.before_init = function(_, config)
-      config.settings.python.pythonPath = get_python_path(config.root_dir or vim.loop.cwd())
-    end
-  end
+    },
+  },
+  before_init = function(_, config)
+    local root = guess_root_dir(config.root_dir or vim.api.nvim_buf_get_name(0))
+    config.settings = config.settings or {}
+    config.settings.python = config.settings.python or {}
+    config.settings.python.pythonPath = get_python_path(root)
+  end,
+})
 
-  lspconfig[server_name].setup(opts)
-end
-
-if mason_lspconfig.setup_handlers then
-  mason_lspconfig.setup_handlers({ setup_server })
-else
-  for _, server in ipairs(mason_lspconfig.get_installed_servers()) do
-    setup_server(server)
-  end
-end
+vim.lsp.enable("pyright")
 
 -- LSP keymaps on attach
 vim.api.nvim_create_autocmd("LspAttach", {
