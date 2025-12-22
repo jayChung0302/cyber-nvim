@@ -28,6 +28,7 @@ cmp.setup({
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local root_markers = {
+  "pyrightconfig.json",
   "pyproject.toml",
   "setup.py",
   "setup.cfg",
@@ -37,12 +38,17 @@ local root_markers = {
 }
 
 local function guess_root_dir(fname)
-  fname = fname or vim.api.nvim_buf_get_name(0)
-  local root = vim.fs.dirname(vim.fs.find(root_markers, { path = fname, upward = true })[1] or "")
-  if root == "" then
+  if type(fname) == "number" then
+    fname = vim.api.nvim_buf_get_name(fname)
+  end
+  if fname == nil or fname == "" then
+    fname = vim.api.nvim_buf_get_name(0)
+  end
+  if fname == "" then
     return vim.loop.cwd()
   end
-  return root
+  local found = vim.fs.find(root_markers, { path = fname, upward = true, limit = 1 })[1]
+  return (found and vim.fs.dirname(found)) or vim.loop.cwd()
 end
 
 local function get_python_path(root_dir)
