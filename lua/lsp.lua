@@ -15,7 +15,13 @@ local luasnip = require("luasnip")
 cmp.setup({
   snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
   mapping = cmp.mapping.preset.insert({
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+    ["<CR>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.confirm({ select = true })
+      else
+        fallback() -- insert newline with indent
+      end
+    end),
     -- <C-Space> is often intercepted on macOS/terminals; add <C-@> as alias.
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-@>"] = cmp.mapping.complete(),
@@ -36,6 +42,7 @@ vim.diagnostic.config({
   update_in_insert = false,
   severity_sort = true,
 })
+vim.diagnostic.enable()
 
 local root_markers = {
   "pyrightconfig.json",
@@ -83,7 +90,7 @@ vim.lsp.config("pyright", {
         typeCheckingMode = "basic",
         autoSearchPaths = true,
         useLibraryCodeForTypes = true,
-        diagnosticMode = "openFilesOnly",
+        diagnosticMode = "workspace",
       },
     },
   },
